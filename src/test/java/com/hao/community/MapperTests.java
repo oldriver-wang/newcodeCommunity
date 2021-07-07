@@ -3,9 +3,11 @@ package com.hao.community;
 
 import com.hao.community.dao.DiscussPostMapper;
 import com.hao.community.dao.LoginTicketMapper;
+import com.hao.community.dao.MessageMapper;
 import com.hao.community.dao.UserMapper;
 import com.hao.community.entity.DiscussesPost;
 import com.hao.community.entity.LoginTicket;
+import com.hao.community.entity.Message;
 import com.hao.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,5 +113,30 @@ public class MapperTests {
         int status = 1;
         String ticket = "abc";
         loginTicketMapper.updateStatus(ticket, status);
+    }
+
+    @Autowired
+    private MessageMapper messageMapper;
+
+    @Test
+    public void testSelectLetters() {
+        List<Message> messages = messageMapper.selectConversations(111, 0, 20);
+        for (Message message : messages) {
+            System.out.println(message);
+        }
+
+        int count = messageMapper.selectConversationCount(111);
+        System.out.println(count);
+
+        List<Message> messages1 = messageMapper.selectLetters("111_112", 0, 10);
+        for (Message message : messages1) {
+            System.out.println(message);
+        }
+
+        int count1 = messageMapper.selectLetterCount("111_112");
+        System.out.println(count1);
+
+        int count2 = messageMapper.selectLetterUnreadCount(131, "111_131");
+        System.out.println(count2);
     }
 }

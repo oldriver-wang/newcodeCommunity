@@ -6,7 +6,7 @@ public class DiscussesPost {
     private int id;
     private int userId;
     private String title;
-    private String text;
+    private String content;
     private int type;
     private int status;
     private Date createTime;
@@ -37,13 +37,7 @@ public class DiscussesPost {
         this.title = title;
     }
 
-    public String getText() {
-        return text;
-    }
 
-    public void setText(String text) {
-        this.text = text;
-    }
 
     public int getType() {
         return type;
@@ -85,13 +79,21 @@ public class DiscussesPost {
         this.score = score;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public String toString() {
         return "DiscussesPost{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
+                ", content='" + content + '\'' +
                 ", type=" + type +
                 ", status=" + status +
                 ", createTime=" + createTime +
@@ -101,16 +103,5 @@ public class DiscussesPost {
     }
 
     public DiscussesPost() {
-    }
-
-    public DiscussesPost(int userId, String title, String text, int type, int status, Date createTime, int commentCount, double score) {
-        this.userId = userId;
-        this.title = title;
-        this.text = text;
-        this.type = type;
-        this.status = status;
-        this.createTime = createTime;
-        this.commentCount = commentCount;
-        this.score = score;
     }
 }

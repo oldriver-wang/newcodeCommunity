@@ -4,7 +4,9 @@ import com.hao.community.entity.DiscussesPost;
 import com.hao.community.entity.Page;
 import com.hao.community.entity.User;
 import com.hao.community.service.DiscussPostService;
+import com.hao.community.service.LikeService;
 import com.hao.community.service.UserService;
+import com.hao.community.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class HomeController {
+public class HomeController implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostServiceImpl;
@@ -25,6 +27,11 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    // 补充点赞逻辑
+    @Autowired
+    private LikeService likeService;
+
 
     // 可以return modelandview
     // 也可以返回字符串， 代表view的名字
@@ -44,13 +51,19 @@ public class HomeController {
         if(list != null){
             for(DiscussesPost post : list){
                 Map<String, Object> map = new HashMap<>();
-                System.out.println(post);
+                // System.out.println(post);
                 map.put("post", post);
                 userService.findUserById(post.getUserId());
                 User user = userService.findUserById(post.getUserId());
                 System.out.println(user);
                 map.put("user", user);
+
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+                map.put("likeCount", likeCount);
+
+
                 discussesPosts.add(map);
+
             }
         }
         model.addAttribute("discussPosts", discussesPosts);

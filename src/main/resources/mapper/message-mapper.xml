@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.community.dao.MessageMapper">
+
+    <sql id="selectFields">
+        id, from_id, to_id, conversation_id, content, status, create_time
+    </sql>
+
+
+    <sql id="insertFields">
+        (from_id, to_id, conversation_id, content, status, create_time)
+    </sql>
+
+
+<!--     查询所有会话  并且 返回每个会话的最后一个消息-->
+    <select id="selectConversations" resultType="Message">
+        select <include refid="selectFields"></include>
+        from message
+        where id in (
+            # 此为子查询
+            select max(id)  from message  # 每个会话只算一次
+            where status != 2
+              and from_id != 1  # 等于1 是系统的通知了
+              and (#{userId}=from_id or #{userId} = to_id)
+            group by conversation_id
+        )
+        order by id desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectConversationCount" resultType="int">
+        select count(m.maxid) from
+        (select max(id) as maxid  from message  # 每个会话只算一次
+        where status != 2
+          and from_id != 1  # 等于1 是系统的通知了
+          and (#{userId}=from_id or #{userId} = to_id)
+        group by conversation_id) as m
+    </select>
+
+    <select id="selectLetters" resultType="Message">
+        select <include refid="selectFields"></include>
+        from message
+        where status != 2
+        and from_id != 1
+        and conversation_id = #{conversationId}
+        order by id desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectLetterCount" resultType="int">
+        select count(id)
+        from message
+        where status!=2
+        and from_id!=2
+        and conversation_id = #{conversation_id}
+    </select>
+
+
+    <select id="selectLetterUnreadCount" resultType="int">
+        select count(id)
+        from message
+        where status = 0
+        and to_id = #{userId}
+        and from_id != 1
+        <if test="conversationId!=null">
+            and conversation_id = #{conversationId}
+        </if>
+    </select>
+
+
+    <insert id="insertMessage" parameterType="Message" keyProperty="id">
+        insert into message <include refid="insertFields"></include>
+        values (#{fromId}, #{toId}, #{conversationId}, #{content}, #{status}, #{createTime})
+    </insert>
+
+
+    <update id="updateStatus">
+        update message set status = #{status}
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+</mapper>

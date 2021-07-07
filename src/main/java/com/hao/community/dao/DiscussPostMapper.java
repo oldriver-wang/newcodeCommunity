@@ -19,4 +19,12 @@ public interface DiscussPostMapper {
     // Param 注解  1、起别名  当名称太长可以起别名
     // 如果只有一个参数，并且在<if> 里使用，则必须加别名
     // 当需要动态拼接一个条件，并且方法有且仅有一个条件，必须加别名
+
+    // 增加帖子的方法
+    int insertDiscussPost(DiscussesPost discussesPost);
+    DiscussesPost selectDiscussPostById(int id);
+
+
+    // 显示评论总数
+    int updateCommentCount(int id, int commentCount);
 }
